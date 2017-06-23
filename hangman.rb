@@ -1,13 +1,12 @@
-require 'pry'
 require 'terminal-table'
 require_relative 'hangman_puzzles'
 
 puts "To do a custom puzzle type custom, otherwise hit enter for a random puzzle"
 if gets.chomp == ''
 	puzzle = [@around_the_house.sample, @movie_quotes.sample].sample
-	if puzzle == @around_the_house.sample
+	if @around_the_house.include?(puzzle)
 		puts "Category: Around The House"
-	else puzzle == @movie_quotes.sample
+	else
 		puts "Category: Movie Quotes"
 	end
 else
@@ -19,17 +18,6 @@ accurate_count = (puzzle_array - [" "]).count
 @final = puzzle.gsub(/[a-zA-Z]/, "_").split("")
 guessed_letter = []
 count = 0
-
-def puzzle_table
-	table = Terminal::Table.new do |t|
-		t.add_row []
-		t.add_row [@final.join.upcase]
-		t.add_row []
-		t.style = { :border_y => " ", :alignment => :center, :border_x => "=", :border_i => "*"}
-		t.headings = ["Puzzle"]
-	end
-	puts table
-end
 
 while @final.count('_') != 0
 	puts "Guess a letter:"
@@ -49,18 +37,18 @@ while @final.count('_') != 0
 		a = (0 ... puzzle_array.length).find_all { |i| puzzle_array.join('')[i,1] == guess }.each { |i| @final[i] = guess }
 		letter = puzzle_array.index(guess)
 		puzzle_array[letter] = " "
-		# binding.pry
 		if a.count > 1
 			puts "Great guess! There were #{a.count} #{guess.upcase}s!"
 			puzzle_table
 		else
 			puts "Great guess! There was a #{guess.upcase}!"
+
 			if @final.count('_') != 0
 				puzzle_table
 			else
+				puzzle_table
 				puts "Puzzle Solved!"
 				puts "It took #{count} guesses!"
-				puzzle_table
 			end
 		end
 		count += 1
@@ -76,9 +64,3 @@ while @final.count('_') != 0
 		count += 1
 	end
 end
-
-# puts "guess"
-# guess = gets.chomp.downcase
-# guessed_letter << "h"
-# guessed_letter << "d"
-# p guessed_letter.sort.join(' ').include?(guess)
